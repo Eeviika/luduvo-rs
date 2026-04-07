@@ -116,18 +116,14 @@ impl FriendsCache {
     /// - the result if it is still valid (not expired)
     /// - `None` if the result is expired or missing
     pub fn get(&mut self, id: u64) -> Option<Friends> {
-        if let Some(entry) = self.cache.get(&id) {
-            let age = Self::now() - entry.last_updated;
+        let entry = self.cache.get(&id)?;
+        let age = Self::now() - entry.last_updated;
 
-            if age <= self.cache_timeout {
-                return Some(entry.result.clone());
-            }
+        if age <= self.cache_timeout {
+            return Some(entry.result.clone());
         }
 
-        // expired or missing result entry
-        // remove stale entry
         self.cache.remove(&id);
-
         None
     }
 
