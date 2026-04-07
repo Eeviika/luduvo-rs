@@ -294,9 +294,12 @@ impl FriendsWrapper {
         } else if status == StatusCode::TOO_MANY_REQUESTS {
             return Err(FriendsError::TooManyRequests());
         } else if status == StatusCode::INTERNAL_SERVER_ERROR {
-            let reason = status.canonical_reason().unwrap_or("no error supplied");
-
-            return Err(FriendsError::InternalError(reason.to_string()));
+            return Err(FriendsError::InternalError(
+                status
+                    .canonical_reason()
+                    .unwrap_or("no error supplied")
+                    .to_string(),
+            ));
         }
 
         let response = response.error_for_status()?;
